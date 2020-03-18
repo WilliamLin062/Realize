@@ -4,17 +4,9 @@ import { Button, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 /*SCREENS*/ 
+import HomeScreen from "./HomeScreen"
 
-function HomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button
-        onPress={() => navigation.navigate('Notifications')}
-        title="Go to notifications"
-      />
-    </View>
-  );
-}
+
 
 function NotificationsScreen({ navigation }) {
   return (
@@ -32,7 +24,9 @@ export default function Setup(){
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeScreen} />
         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+
       </Drawer.Navigator>
     </NavigationContainer>
-  );
+  
+      );
 }
