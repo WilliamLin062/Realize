@@ -1,32 +1,32 @@
+import * as React from "react";
+import { Button, View } from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+/*SCREENS*/
 
-import * as React from 'react';
-import { Button, View } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-/*SCREENS*/ 
-import HomeScreen from "./HomeScreen"
+import HomeScreen from "./HomeScreen";
+import NewPost from "./NewPost";
 
-
-
-function NotificationsScreen({ navigation }) {
+/*function NotificationsScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Button onPress={() => navigation.goBack()} title="Go back home" />
     </View>
   );
 }
-
+*/
 const Drawer = createDrawerNavigator();
-
-export default function Setup(){
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+export default function Setup() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator initialRouteName="Home">
-        <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Notifications" component={NotificationsScreen} />
-
-      </Drawer.Navigator>
+      <Stack.Navigator>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="New" component={NewPost} />
+      </Stack.Navigator>
     </NavigationContainer>
-  
-      );
+  );
 }
