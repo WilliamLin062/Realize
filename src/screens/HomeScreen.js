@@ -9,11 +9,21 @@ import { Button } from "react-native-elements";
 
 export default function HomeScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <HomeCard></HomeCard>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: "#FFFFFF"
+      }}
+    >
+      <HomeCard
+        style={{
+          flex: 1,
+          backgroundColor: "#FFFFFF"
+        }}
+      />
       <View
         style={{
-          flexDirection: "row",
+          flexDirection: "row"
         }}
       >
         <Button

@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   HomeCard: {
     marginTop: 10,
     flex: 1,
-    width: 420
+    
   },
   blue: {
     color: "blue"
