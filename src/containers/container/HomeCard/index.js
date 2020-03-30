@@ -22,53 +22,30 @@ import Constants from "expo-constants";
 // implemented without image with header
 import * as SQLite from "expo-sqlite";
 import { createNativeWrapper } from "react-native-gesture-handler";
-import { Item } from "../HomcardItem";
 
 const db = SQLite.openDatabase("db.db");
-class Items extends React.Component {
-  state = {
-    items: null
-  };
-
-  componentDidMount() {
-    this.update();
-  }
-  update() {
-    db.transaction(tx => {
-      tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
-        this.setState({ items: _array })
-      );
-    });
-  }
-
-  render() {
-    const { items } = this.state;
-    var i = 0;
-    if (items === null) {
-      console.log("erro");
-      return null;
-    }
-    return (
-      <View style={styles.sectionContainer}>
-        <Text style={{}}>HIIIIIIIIIIIIIIsdasdasdIIII</Text>
-        {items.map(({ id, content, title }) => {
-          <TouchableOpacity
-            key={id.toString()}
-            style={styles.size}
-          > 
-            <Text style={{}}>{title} { console.log(id)}</Text>
-            <Text style={{}}>{id}</Text>
-          </TouchableOpacity>;
-        })}
-      </View>
-    );
-  }
+function Item({ id, title, selected, onSelect, content }) {
+  return (
+    <TouchableOpacity
+      onPress={() => onSelect(id)}
+      style={[
+        styles.item,
+        { backgroundColor: selected ? "#6e3b6e" : "#f9c2ff" }
+      ]}
+    >
+      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>
+        {content} {console.log("有在做事")}
+      </Text>
+    </TouchableOpacity>
+  );
 }
 
 /************************************************************************************** */
 export default class HomeCard extends Component {
   state = {
-    text: null
+    text: null,
+    items: null
   };
   componentDidMount() {
     db.transaction(tx => {
@@ -78,18 +55,37 @@ export default class HomeCard extends Component {
         (_, { rows }) => console.log("開啟資料庫成功")
       );
     });
+    this.update();
   }
-  update = () => {
-    this.todo && this.todo.update();
-  };
+  update() {
+    db.transaction(tx => {
+      tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
+        this.setState({ items: _array })
+      );
+    });
+  }
   render() {
+    const { items } = this.state;
+    var i = 0;
+    if (items === null) {
+      console.log("erro");
+      return null;
+    }
     return (
-      <View style={styles.container}>
-        <Text style={styles.fontcolor}>Diary List{console.log("Text")}</Text>
-        <ScrollView style={styles.listArea}>
-          <Items/>
-        </ScrollView>
-      </View>
+      <SafeAreaView style={styles.sectionContainer}>
+        <FlatList
+          data={items}
+          renderItem={({item}) => (
+            <Item
+              id={item.id}
+              title={item.title}
+              content={item.content}
+            />
+          )}
+          keyExtractor={item => item.id}
+          
+        />{console.log(items)}
+      </SafeAreaView>
     );
   }
 }
@@ -99,10 +95,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   container: {
-    backgroundColor: "#008844",
+    backgroundColor: "#00DDDD",
     flex: 1,
-    width: 800,
-    height: 800,
     paddingTop: Constants.statusBarHeight
   },
   heading: {
