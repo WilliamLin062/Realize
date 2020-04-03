@@ -6,7 +6,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 /*SCREENS*/
 
-import HomeScreen from "./HomeScreen";
+import Home from "./home/Home";
 import NewPost from "./NewPost";
 
 /*function NotificationsScreen({ navigation }) {
@@ -24,7 +24,7 @@ export default function Setup() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="New" component={NewPost} />
       </Stack.Navigator>
     </NavigationContainer>

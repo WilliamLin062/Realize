@@ -2,42 +2,35 @@ import React, { Component } from "react";
 import { View, TextInput, Text, Button } from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
+import { ScrollView } from "react-native-gesture-handler";
 
 const db = SQLite.openDatabase("db.db");
 
 export class Edit extends Component {
+  static navigationOptions = {
+    mode: "modal",
+    gesturesEnabled: false,
+  };
   constructor(props) {
     super(props);
     this.state = {
-      text: ""
+      text: "",
+      title: "",
+      content: "",
+      date: new Date(),
+      selected: false,
     };
   }
 
   componentDidMount() {
-    db.transaction(
-      tx => {
-        tx.executeSql(
-          "create table if not exists diary (id integer primary key not null, date text, title text,content text);"
-        );
-        tx.executeSql(
-          "select * from diary",
-          [],
-          (_,{rows}) => console.log(JSON.stringify(rows))
-        );
-      }
-    );
-  }
-  componentDidUpdate(prevProps) {
-    // 常見用法（別忘了比較 prop）：
-    if (this.props.userID !== prevProps.userID) {
-      this.fetchData(this.props.userID);
-      this.setState(text, text => {
-        text = null;
-      });
+    db.transaction((tx) => {
       tx.executeSql(
         "create table if not exists diary (id integer primary key not null, date text, title text,content text);"
       );
-    }
+      tx.executeSql("select * from diary", [], (_, { rows: { _array } }) =>
+        console.log(JSON.stringify(_array))
+      );
+    });
   }
 
   add = (text) => {
@@ -45,47 +38,53 @@ export class Edit extends Component {
     if (text === null || text === "") {
       return false;
     }
-    db.transaction(tx => {
-      tx.executeSql("insert into diary (content) values (?)", [text]);
+    db.transaction((tx) => {
+      tx.executeSql("insert into diary (content,title) values (?,?)", [
+        this.state.content,this.state.title 
+      ]);
       tx.executeSql(
         "select * from diary order by content",
         [],
-        (_,{rows}) => console.log(JSON.stringify(rows))
+        (_, { rows: { _array } }) => console.log(JSON.stringify(_array))
       );
-    })
+    });
   };
-  logout(text) {
-    Console(JSON.stringify(text));
-  }
+
   render() {
     return (
-      <View
+      <ScrollView
         style={{
-          flex: 1
+          flex: 1,
         }}
       >
-        <Text>title</Text>
+        <Text>標題</Text>
+        <TextInput
+          style={{}}
+          maxLength={40}
+          onChangeText={(title) => this.setState({ title })}
+          value={this.state.title}
+        />
+        <Text>內容</Text>
         <TextInput
           style={{
-            flex: 1
+            flex: 1,
+            height:300
           }}
-          maxLength={40}
-          onChangeText={text => this.setState({ text })}
-          value={this.state.text}
-          multiline={false}
+          maxLength={2000}
+          onChangeText={(content) => this.setState({ content })}
+          value={this.state.content}
+          textAlignVertical={"top"}
+          multiline={true}
           keyboardAppearance={"light"}
-          /*        onSubmitEditing={() => {
-            this.add(this.state.text);
-          }}*/
         />
         <Button
           title="存檔"
-          onPress={() => {
-            this.add(this.state.text);
+          onPress={(e) => {
+            this.add(this.state.content,this.state.title,this.state.date);
             console.log("存檔");
           }}
         />
-      </View>
+      </ScrollView>
     );
   }
 }
