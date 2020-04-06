@@ -1,20 +1,15 @@
 import * as React from "react";
-import { View, InteractionManager } from "react-native";
+import { View, InteractionManager, Text,StyleSheet } from "react-native";
 import HomeCard from "../../containers/container/HomeCard";
-import { ActionSheetIOS, StyleSheet } from "react-native";
-import NewPost from "../NewPost";
-import { NavigationContainer } from "@react-navigation/native";
-import { NavigationEvents } from "react-navigation";
 import { Navigation } from "../../conponets/Navigation";
 
-export default function Home({ navigation: { navigate } }, props) {
-  const title = "add new";
+export default function Home({ navigation: { navigate, addListener } }, props) {
+  const title = "新增日記";
   return (
     <View style={styles.container}>
-     <HomeCard />
+      <HomeCard />
       <Navigation
-        // leftIcon={require('../../assets/images/icon_search.png')}
-        rightClick={(e) => navigate("New")}
+        rightClick={(e) => navigate("New",{type:0})}
         rightText={title}
       />
     </View>

@@ -14,7 +14,7 @@ import {
 import Constants from "expo-constants";
 // implemented without image with header
 import * as SQLite from "expo-sqlite";
-import { createNativeWrapper } from "react-native-gesture-handler";
+import { withNavigation } from "react-navigation";
 // Utils
 import {
   ScreenWidth,
@@ -23,22 +23,25 @@ import {
   TitleColor,
 } from "../../../utils";
 import RBSheet from "react-native-raw-bottom-sheet";
-
+import { useFonts } from "@use-expo/font";
+import * as RootNavigation from "../../../screens/RootNavigation.js";
 const db = SQLite.openDatabase("db.db");
 //function Item({ id, title, selected, onSelect, content }) {}
 class Item extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: this.props,
-      title: this.props.title,
-      content: this.props.content,
+      id: this.props.id,
+      title: this.props.content,
+      content: this.props.title,
       data: this.props.data,
       selected: "",
       delete: 0,
+      isEdit: false,
+      flatListRefreshings: this.props,
     };
   }
-  deleteDiary({ id }) {
+  deleteDiary(id) {
     db.transaction(
       (tx) => {
         tx.executeSql(`delete from diary where id = ?;`, [id]);
@@ -47,26 +50,47 @@ class Item extends React.Component {
       this.setState({ delete: delete +1 })
     );
   }
-  contentBox(title, content) {
+  contentBox(title, content, type) {
     return (
-      <View style={{ flex: 1, flexDirection: "row" }}>
-        <Image></Image>
-        <Text style={{ marginRight: 80 }}>image</Text>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          borderRadius: 80,
+          flexWrap: "nowrap",
+        }}
+      >
+        <Text style={{ marginRight: 80, fontSize: 20 }}>image{type}</Text>
+
         <View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{title}</Text>
+          <View style={styles.contentBox}>
+            <Text numberOfLines={1} ellipsizeMode="head" style={styles.title}>
+              {title}
+            </Text>
+            <Text numberOfLines={4} ellipsizeMode="head" style={styles.content}>
+              {content}
+            </Text>
           </View>
-          <Text style={styles.content}>{content}</Text>
         </View>
       </View>
     );
   }
   handlePress = (index) => this.setState({ selected: index });
   render() {
-    const { id, content, title, data, selected } = this.state;
+    const {
+      id,
+      content,
+      title,
+      data,
+      selected,
+      flatListRefreshings,
+    } = this.state;
     return (
       <TouchableOpacity
         onLongPress={() => this.refRBSheet.open()}
+        onPress={() => {
+          RootNavigation.navigate("Diary", { cardId: id.toString() });
+        }}
         style={[
           styles.item,
           { backgroundColor: selected ? "#DCDCDC" : "#F8F8FF" },
@@ -88,11 +112,24 @@ class Item extends React.Component {
         >
           <TouchableOpacity
             onPress={() => {
+              RootNavigation.navigate("New", {
+                cardId: id.toString(),
+                type: 1,
+              }),
+                this.refRBSheet.close();
+            }}
+            style={styles.button}
+          >
+            <Text style={styles.buttonEdit}>編輯</Text>
+          </TouchableOpacity>
+          <View style={styles.buttonLine}></View>
+          <TouchableOpacity
+            onPress={() => {
               this.deleteDiary(id), this.refRBSheet.close();
             }}
             style={styles.button}
           >
-            <Text style={styles.buttonTitle}>Delete</Text>
+            <Text style={styles.buttonDelete}>刪除</Text>
           </TouchableOpacity>
         </RBSheet>
       </TouchableOpacity>
@@ -108,8 +145,15 @@ export default class HomeCard extends Component {
     items: null,
     refreshing: false,
     seed: 1,
+    flatListRefreshing: false,
   };
+  updateTimer() {
+    this.timer1 = setInterval(() => {
+      this.update();
+    }, 5000);
+  }
   componentDidMount() {
+    //               here to get Data
     db.transaction((tx) => {
       tx.executeSql(
         "create table if not exists diary (id integer primary key not null, date text, title text,content text);",
@@ -118,19 +162,25 @@ export default class HomeCard extends Component {
       );
     });
     this.getData();
+    this.updateTimer();
   }
+  //               here to unSub
+  componentWillUnmount() {
+    this.timer1 && clearInterval(this.timer1);
+    console.log("Unmounted");
+  }
+  // data
   update() {
     db.transaction((tx) => {
       tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
-        this.setState({ items: _array })
+        this.setState({
+          items: _array,
+          refreshing: false,
+          flatListRefreshing: !this.state.flatListRefreshing,
+        })
       );
     });
-    this.setState(
-      {
-        refreshing: false,
-      },
-      console.log("update")
-    );
+  console.log("update")
   }
   getData() {
     db.transaction((tx) => {
@@ -139,23 +189,28 @@ export default class HomeCard extends Component {
       );
     });
   }
-  /* didUpdate(){
-    this.
-  }*/
-
-  //
+  // reFresh
 
   handleRefresh = () => {
     this.setState(
       {
         refreshing: true,
+        items:null
       },
       (e) => {
         this.update();
       }
     );
   };
-  //
+  //render
+  renderItem = ({ item }) => (
+    <Item
+      id={item.id}
+      title={item.title}
+      content={item.content}
+      onPress={(e) => item.id}
+    />
+  );
   render() {
     const { items } = this.state;
     var i = 0;
@@ -166,38 +221,75 @@ export default class HomeCard extends Component {
     return (
       <SafeAreaView style={styles.sectionContainer}>
         <FlatList
-          data={items}
-          renderItem={({ item }) => (
-            <Item
-              id={item.id}
-              title={item.title}
-              content={item.content}
-              onPress={(e) => item.id}
-            />
+          ListEmptyComponent={(e) => (
+            <View style={{ flex: 1, alignItems: "center" }}>
+              <Text style={{ color: "#000000", fontSize: 25 }}>
+                還沒有任何內容窩{" "}
+              </Text>
+            </View>
           )}
+          ListFooterComponent={(e) =>
+            this.state.isEmpty ? (
+              <View style={{ flex: 1, alignItems: "center" }}>
+                <Text style={{ color: "#000000", fontSize: 25 }}>
+                  已經到底部了!!!!
+                </Text>
+              </View>
+            ) : null
+          }
+          data={items}
+          refreshing={true}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={5}
           keyExtractor={(item) => item.id.toString()}
           refreshing={this.state.refreshing}
           onRefresh={this.handleRefresh}
+          extraData={this.state}
+          renderItem={this.renderItem}
         />
-        {console.log(items)}
+        {console.log(this.state.flatListRefreshing)}
       </SafeAreaView>
     );
   }
 }
+//style
 const styles = StyleSheet.create({
-  buttonTitle: {
-    color: "#000000",
-    fontSize: 16,
-    fontWeight: "600",
+  buttonDelete: {
+    color: "#FF2D2D",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  buttonLine: {
+    width: 100,
+    borderBottomWidth: 1,
+    margin: 10,
+  },
+  buttonEdit: {
+    color: "#3C3C3C",
+    fontSize: 20,
+    fontWeight: "bold",
   },
   content: {
-    height: 100,
+    //backgroundColor: "#dd552d",
+    maxWidth: 280,
+    fontSize: 15,
+    margin: 7,
+    flexWrap: "nowrap",
+    fontFamily: "Roboto",
+  },
+  contentBox: {
+    flex: 1,
+    //   backgroundColor: "#dd552d",
+    maxWidth: 270,
+    minWidth: 270,
+    flexWrap: "nowrap",
   },
   container: {
     backgroundColor: "#F8F8FF",
     flex: 1,
     paddingTop: Constants.statusBarHeight,
   },
+
   fontcolor: {
     color: "#000",
     flex: 1,
@@ -220,13 +312,24 @@ const styles = StyleSheet.create({
     margin: 16,
     padding: 8,
   },
+  item: {
+    margin: 5,
+    flex: 1,
+    minHeight: 150,
+    elevation: 5,
+    marginTop: 5,
+    marginBottom: 5,
+    maxWidth: ScreenHeight,
+    borderRadius: 10,
+    maxWidth: ScreenWidth,
+  },
   listArea: {
     backgroundColor: "#5555FF",
     flex: 1,
     paddingTop: 16,
   },
   sectionContainer: {
-    backgroundColor: "#DCDCDC",
+    backgroundColor: "#dfdfdf",
     flex: 1,
   },
   sectionHeading: {
@@ -259,11 +362,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   titleContainer: {
-    width: ScreenWidth-125,
-    backgroundColor: "#ff55ff",
- 
+    maxWidth: 283,
   },
-  title:{
-    fontSize:10
-  }
+  title: {
+    // backgroundColor: "#ff55ff",
+    fontSize: 20,
+    fontWeight: "bold",
+    maxWidth: 280,
+    marginLeft: 5,
+    marginTop: 2,
+    fontFamily: "monospace",
+  },
 });

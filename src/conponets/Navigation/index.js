@@ -154,7 +154,8 @@ const styles = StyleSheet.create({
     backgroundColor: StreamColor,
     flexDirection: "row",
     paddingTop: navigationTop,
-    alignItems: "center"
+    alignItems: "center",
+    elevation:5
   },
   touchLeft: {
     flexDirection: "row",
@@ -191,6 +192,8 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   touchRight: {
+    backgroundColor:"#ff00ff",
+    borderRadius:10,
     flexDirection: "row",
     alignItems: "center",
     position: "absolute",
@@ -204,8 +207,10 @@ const styles = StyleSheet.create({
     height: 20
   },
   rightText: {
+  
     marginRight: 3,
-    fontSize: 13
+    fontSize: 16,
+    fontWeight:"bold"
   }
 });
 
