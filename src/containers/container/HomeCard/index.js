@@ -60,7 +60,7 @@ class Item extends React.Component {
           flexWrap: "nowrap",
         }}
       >
-        <Text style={{ marginRight: 80, fontSize: 20 }}>image{type}</Text>
+        <Text style={{ marginRight: 80, fontSize: 20 }}>type{type}</Text>
 
         <View>
           <View style={styles.contentBox}>
@@ -153,6 +153,7 @@ export default class HomeCard extends Component {
     }, 5000);
   }
   componentDidMount() {
+    const items2=[]
     //               here to get Data
     db.transaction((tx) => {
       tx.executeSql(
@@ -192,10 +193,11 @@ export default class HomeCard extends Component {
   // reFresh
 
   handleRefresh = () => {
+    const { items2 } = this.state.items;
     this.setState(
       {
         refreshing: true,
-        items:null
+        items:items2
       },
       (e) => {
         this.update();
@@ -213,7 +215,7 @@ export default class HomeCard extends Component {
   );
   render() {
     const { items } = this.state;
-    var i = 0;
+    console.log(items)
     if (items === null) {
       console.log("erro");
       return null;
