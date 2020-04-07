@@ -192,7 +192,7 @@ export default class HomeCard extends Component {
       );
     });
     this.getData();
-    //   this.updateTimer();
+    this.updateTimer();
   }
   //
   componentDidUpdate() {}

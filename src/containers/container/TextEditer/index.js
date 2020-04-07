@@ -113,13 +113,15 @@ export class Edit extends Component {
       });
     }
     if (params.type == 1) {
+      console.log("編輯")
       db.transaction((tx) => {
         tx.executeSql(
-          "update diary set(content,title,date)=(?,?,?) where id= ?",
+          "update diary set(content,title,date,type)=(?,?,?,?) where id= ?",
           [
             this.state.content,
             this.state.title,
             this.state.date.getFullYear(),
+            this.state.type,
             params.cardId,
           ],
           ToastAndroid.show("更新成功!", ToastAndroid.SHORT)
@@ -127,7 +129,7 @@ export class Edit extends Component {
         tx.executeSql(
           "select * from diary order by content",
           [],
-          (_, { rows: { _array } }) => console.log(JSON.stringify(_array))
+          (_, { rows: { _array } }) => alert(JSON.stringify(_array))
         );
       });
     }
@@ -158,7 +160,7 @@ export class Edit extends Component {
               </Picker>
               <TextInput
                 placeholder="輸入標題"
-                style={{fontSize:18}}
+                style={{fontSize:18,width:250}}
                 maxLength={40}
                 onChangeText={(title) => this.setState({ title })}
                 value={this.state.title.toString()}
