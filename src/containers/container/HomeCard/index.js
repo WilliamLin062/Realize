@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   ActionSheetIOS,
 } from "react-native";
+import { Navigation } from "../../../conponets/Navigation";
 import Constants from "expo-constants";
 // implemented without image with header
 import * as SQLite from "expo-sqlite";
@@ -25,6 +26,7 @@ import {
 import RBSheet from "react-native-raw-bottom-sheet";
 import { useFonts } from "@use-expo/font";
 import * as RootNavigation from "../../../screens/RootNavigation.js";
+import { SearchBar, Divider } from "react-native-elements";
 const db = SQLite.openDatabase("db.db");
 //function Item({ id, title, selected, onSelect, content }) {}
 class Item extends React.Component {
@@ -34,6 +36,7 @@ class Item extends React.Component {
       id: this.props.id,
       title: this.props.content,
       content: this.props.title,
+      type: this.props.type,
       data: this.props.data,
       selected: "",
       delete: 0,
@@ -51,6 +54,9 @@ class Item extends React.Component {
     );
   }
   contentBox(title, content, type) {
+    const TYPE = ["沒有分類", "心情", "筆記", "記帳", "隨筆"];
+    const COLOR = ["#292D0C", "#B92061", "#E2582F", "#C0A827", "#F9FDB3"];
+    console.log(type);
     return (
       <View
         style={{
@@ -60,7 +66,19 @@ class Item extends React.Component {
           flexWrap: "nowrap",
         }}
       >
-        <Text style={{ marginRight: 80, fontSize: 20 }}>type{type}</Text>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginLeft: 10,
+            width: 100,
+            borderRightWidth: 2,
+            borderRightColor: "#A8BDB8",
+            backgroundColor: COLOR[type],
+          }}
+        >
+          <Text style={{ fontSize: 20 }}>{TYPE[type]}</Text>
+        </View>
 
         <View>
           <View style={styles.contentBox}>
@@ -77,14 +95,7 @@ class Item extends React.Component {
   }
   handlePress = (index) => this.setState({ selected: index });
   render() {
-    const {
-      id,
-      content,
-      title,
-      data,
-      selected,
-      flatListRefreshings,
-    } = this.state;
+    const { id, content, title, data, selected, type } = this.state;
     return (
       <TouchableOpacity
         onLongPress={() => this.refRBSheet.open()}
@@ -96,7 +107,7 @@ class Item extends React.Component {
           { backgroundColor: selected ? "#DCDCDC" : "#F8F8FF" },
         ]}
       >
-        {this.contentBox(content, title)}
+        {this.contentBox(content, title, type)}
         <RBSheet
           ref={(ref) => {
             this.refRBSheet = ref;
@@ -141,29 +152,47 @@ class Item extends React.Component {
 //
 export default class HomeCard extends Component {
   state = {
-    text: null,
     items: null,
+    DATA: [],
     refreshing: false,
-    seed: 1,
+    search: "",
     flatListRefreshing: false,
   };
+  updateSearch = (search) => {
+    this.setState({ search });
+  };
+  _DELETE_TABLE() {
+    //this use to test
+    db.transaction((tx) => {
+      tx.executeSql("pragma foreign_key = off", [], (_, { rows }) =>
+        console.log("限制關閉")
+      );
+      tx.executeSql("drop table if exists diary", [], (_, { rows }) =>
+        console.log("刪除資料庫")
+      );
+      tx.executeSql("pragma foreign_key = on", [], (_, { rows }) =>
+        console.log("限制開啟")
+      );
+    });
+  }
   updateTimer() {
     this.timer1 = setInterval(() => {
       this.update();
+      this.Diary();
     }, 5000);
   }
   componentDidMount() {
-    const items2=[]
+    //this._DELETE_TABLE()
     //               here to get Data
     db.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists diary (id integer primary key not null, date text, title text,content text);",
+        "create table if not exists diary (id integer primary key not null, date text, title text,content text,type integer);",
         [],
         (_, { rows }) => console.log("開啟資料庫成功")
       );
     });
     this.getData();
-    this.updateTimer();
+    // this.updateTimer();
   }
   //               here to unSub
   componentWillUnmount() {
@@ -177,11 +206,11 @@ export default class HomeCard extends Component {
         this.setState({
           items: _array,
           refreshing: false,
-          flatListRefreshing: !this.state.flatListRefreshing,
+          //    flatListRefreshing: !this.state.flatListRefreshing,
         })
       );
     });
-  console.log("update")
+    console.log("update");
   }
   getData() {
     db.transaction((tx) => {
@@ -190,6 +219,33 @@ export default class HomeCard extends Component {
       );
     });
   }
+  Diary() {
+    const { items } = this.state;
+    // console.log("diary    " + items);
+    const title = items.map((item) => Object.values(item)[2]);
+    const content = items.map((item) => Object.values(item)[3]);
+    //  var itemData=[]
+    // itemData=items.map((item)=>Object.values(item))
+    //console.log(typeof items);
+    /*  for(let i=0;i<items.length;i++){
+   
+    }*/
+
+    //console.log("---------------------");
+    //   console.log("物件"+" "+itemData)
+    // console.log("測試取直" + "  " + content);
+    //console.log("測試取直" + "  " + title);
+    // console.log("測試取直" + "  " + item);
+    // this.setState({ content: content, title: title });
+  }
+  searchFilterFunction = (text) => {
+    const { items } = this.state;
+    const newData = items.filter((item) => {
+      item > -1;
+    });
+
+    this.setState({ DATA: newData });
+  };
   // reFresh
 
   handleRefresh = () => {
@@ -197,7 +253,7 @@ export default class HomeCard extends Component {
     this.setState(
       {
         refreshing: true,
-        items:items2
+        items: items2,
       },
       (e) => {
         this.update();
@@ -210,18 +266,27 @@ export default class HomeCard extends Component {
       id={item.id}
       title={item.title}
       content={item.content}
+      type={item.type}
       onPress={(e) => item.id}
     />
   );
   render() {
     const { items } = this.state;
-    console.log(items)
+    const { search } = this.state;
     if (items === null) {
       console.log("erro");
       return null;
     }
     return (
       <SafeAreaView style={styles.sectionContainer}>
+        <SearchBar
+          lightTheme
+          round
+          autoCorrect={false}
+          placeholder="Type Here..."
+          onChangeText={(text) => this.searchFilterFunction(text)}
+          value={search}
+        />
         <FlatList
           ListEmptyComponent={(e) => (
             <View style={{ flex: 1, alignItems: "center" }}>
@@ -248,6 +313,10 @@ export default class HomeCard extends Component {
           onRefresh={this.handleRefresh}
           extraData={this.state}
           renderItem={this.renderItem}
+        />
+        <Navigation
+          rightClick={(e) => RootNavigation.navigate("New", { type: 0 })}
+          rightText={"新增日記"}
         />
         {console.log(this.state.flatListRefreshing)}
       </SafeAreaView>
@@ -373,6 +442,8 @@ const styles = StyleSheet.create({
     maxWidth: 280,
     marginLeft: 5,
     marginTop: 2,
+    borderBottomWidth: 1,
+    borderColor: "#dfdfdf",
     fontFamily: "monospace",
   },
 });

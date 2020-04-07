@@ -8,14 +8,14 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
-  Animated
+  Animated,
 } from "react-native";
 // Utils
 import {
   ScreenWidth,
   ScreenHeight,
   StreamColor,
-  TitleColor
+  TitleColor,
 } from "../../utils";
 // 导航栏高度
 const navigationH = Platform.select({ ios: 64, android: 44 });
@@ -47,7 +47,7 @@ export class Navigation extends Component {
               fontSize: Platform.select({ ios: 16, android: 18 }),
               fontWeight: "400",
               textAlign: "center",
-              color: TitleColor
+              color: TitleColor,
             }}
           >
             {this.props.text}
@@ -60,31 +60,31 @@ export class Navigation extends Component {
   }
 
   leftClick = () => {
-   // this.props.leftClick();
+    // this.props.leftClick();
     this.setState({
-      leftDisabled: true
+      leftDisabled: true,
     });
     this.timer1 = setTimeout(() => {
       this.setState({
-        leftDisabled: false
+        leftDisabled: false,
       });
     }, 500);
   };
 
   rightClick = () => {
-    const navigate=this.props.navigation
+    const navigate = this.props.navigation;
     this.props.rightClick();
     this.setState({
-      rightDisabled: true
+      rightDisabled: true,
     });
     this.timer2 = setTimeout(() => {
       this.setState({
-        rightDisabled: false
+        rightDisabled: false,
       });
     }, 500);
   };
   render() {
-    const navigate=this.props.navigate
+    const navigate = this.props.navigate;
     return (
       <Animated.View
         style={[styles.container, this.props.style]}
@@ -104,12 +104,11 @@ export class Navigation extends Component {
               styles.backIcon,
               {
                 opacity: this.props.leftIcon == false ? 0 : 1,
-                width: this.props.leftIcon ? 20 : 0
-              }
+                width: this.props.leftIcon ? 20 : 0,
+              },
             ]}
           />
           <Text style={styles.backText}>{this.props.leftText}</Text>
-          
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -126,7 +125,7 @@ export class Navigation extends Component {
           resizeMode={"contain"}
           disabled={this.state.rightDisabled}
           activeOpacity={0.6}
-          onPress={(e)=>this.rightClick()}
+          onPress={(e) => this.rightClick()}
         >
           <Text style={styles.rightText}>{this.props.rightText}</Text>
           <Image
@@ -136,9 +135,9 @@ export class Navigation extends Component {
               styles.rightIcon,
               {
                 opacity: this.props.rightIcon == undefined ? 0 : 1,
-                width: this.props.rightIcon ? 20 : 0
+                width: this.props.rightIcon ? 20 : 0,
               },
-              this.props.rightStyle
+              this.props.rightStyle,
             ]}
           />
         </TouchableOpacity>
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingTop: navigationTop,
     alignItems: "center",
-    elevation:5
+    elevation: 5,
   },
   touchLeft: {
     flexDirection: "row",
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     height: 44,
-    top: navigationTop
+    top: navigationTop,
   },
   touchTwoLeft: {
     flexDirection: "row",
@@ -171,16 +170,16 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 70,
     height: 44,
-    top: navigationTop
+    top: navigationTop,
   },
   backIcon: {
     width: 20,
     height: 20,
-    marginLeft: 10
+    marginLeft: 10,
   },
   backText: {
     marginLeft: 3,
-    fontSize: 13
+    fontSize: 13,
   },
   navTitle: {
     position: "absolute",
@@ -189,29 +188,30 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
   },
   touchRight: {
-    backgroundColor:"#ff00ff",
-    borderRadius:10,
+    elevation: 5,
+    backgroundColor: "#ffffff",
+    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     position: "absolute",
     right: 0,
     height: 44,
     top: navigationTop,
-    marginRight: 10
+    marginRight: 10,
   },
   rightIcon: {
     width: 20,
-    height: 20
+    height: 20,
   },
   rightText: {
-  
+    elevation: 5,
     marginRight: 3,
     fontSize: 16,
-    fontWeight:"bold"
-  }
+    fontWeight: "bold",
+  },
 });
 
 Navigation.defaultProps = {
@@ -222,7 +222,7 @@ Navigation.defaultProps = {
   rightClick: () => {},
   rightText: "",
   rightIcon: null,
-  rightStyle: {}
+  rightStyle: {},
 };
 Navigation.propTypes = {
   isAllowTouch: PropTypes.bool.isRequired,
@@ -234,6 +234,6 @@ Navigation.propTypes = {
   rightIcon: PropTypes.number,
   rightStyle: PropTypes.shape({
     width: PropTypes.number,
-    height: PropTypes.number
-  })
+    height: PropTypes.number,
+  }),
 };

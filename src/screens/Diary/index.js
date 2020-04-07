@@ -33,7 +33,7 @@ export default class DiaryView extends Component {
     //               here to get Data
     await db.transaction((tx) => {
       tx.executeSql(
-        "create table if not exists diary (id integer primary key not null, date text, title text,content text);",
+        "create table if not exists diary (id integer primary key not null, date text, title text,content text,type integer);",
         [this.state.id],
         (_, { rows }) => console.log("開啟資料庫成功")
       );
