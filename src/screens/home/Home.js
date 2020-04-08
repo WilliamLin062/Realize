@@ -56,7 +56,7 @@ class Item extends React.Component {
     );
   }
   contentBox(title, content, type) {
-    const TYPE = ["沒有分類", "心情", "筆記", "記帳", "隨筆"];
+    const TYPE = ["沒有分類", "心情", "筆記", "記帳", "創作"];
     const COLOR = ["#F4F482", "#B92061", "#E2582F", "#C0A827", "#F9FDB3"];
     console.log(type);
     return (
