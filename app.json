@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Test",
-    "slug": "test",
+    "name": "Realize",
+    "slug": "realize",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
@@ -9,6 +9,7 @@
       "android",
       "web"
     ],
+
     "version": "1.0.0",
     "orientation": "portrait",
     "splash": {
@@ -24,7 +25,13 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    
+    "android": {
+    "package": "com.williamsProject.Realize",
+    "versionCode": 1
+    },
+    "description": "a simple diary",
+    "githubUrl": "https://github.com/WilliamLin062/Realize"
   }
- 
 }

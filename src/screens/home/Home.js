@@ -9,14 +9,12 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
-  ActionSheetIOS,
   ActivityIndicator
 } from "react-native";
 import { Navigation } from "../../conponets/Navigation";
 import Constants from "expo-constants";
 // implemented without image with header
 import * as SQLite from "expo-sqlite";
-import { withNavigation } from "react-navigation";
 // Utils
 import {
   ScreenWidth,
@@ -300,6 +298,7 @@ export default class HomeCard extends Component {
             round
             autoCorrect={false}
             placeholder="搜尋標題..."
+            clearTextOnFocus={true}
             onChangeText={(text) =>{ this.setState({search:text}) ,this.searchFilterFunction(text)}}
             value={search}
           />
