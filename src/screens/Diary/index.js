@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, SafeAreaView, StyleSheet, ScrollView } from "react-native";
+import { Text, View, SafeAreaView, StyleSheet, ScrollView ,ActivityIndicator} from "react-native";
 import * as SQLite from "expo-sqlite";
 const db = SQLite.openDatabase("db.db");
 import {
@@ -15,6 +15,7 @@ export default class DiaryView extends Component {
       id: null,
       text: null,
       items: null,
+      loadIng:false
     };
   }
 
@@ -28,7 +29,7 @@ export default class DiaryView extends Component {
   }
   async componentDidMount() {
     const { params } = this.props.route;
-    this.setState({ id: params.cardId });
+    this.setState({ id: params.cardId ,loadIng:true});
     //  alert(this.state.items);
     //               here to get Data
     await db.transaction((tx) => {
@@ -79,10 +80,17 @@ export default class DiaryView extends Component {
     console.log("測試取直" + "  " + content);
     console.log("測試取直" + "  " + title);
     // console.log("測試取直" + "  " + item);
-    this.setState({ content: content, title: title });
+    this.setState({ content: content, title: title,loadIng:false });
   }
   //render
   render() {
+    if (this.state.loadIng === true) {
+      return (
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    }else
     return (
       <View style={styles.container}>
         <SafeAreaView

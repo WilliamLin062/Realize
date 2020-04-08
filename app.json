@@ -12,8 +12,9 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "splash": {
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/drawable-hdpi/WelecomScreen.png",
+      "backgroundColor": "#ffffff",
+      "resizeMode": "cover"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -25,4 +26,5 @@
       "supportsTablet": true
     }
   }
+ 
 }

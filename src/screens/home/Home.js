@@ -10,6 +10,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActionSheetIOS,
+  ActivityIndicator
 } from "react-native";
 import { Navigation } from "../../conponets/Navigation";
 import Constants from "expo-constants";
@@ -39,23 +40,24 @@ class Item extends React.Component {
       type: this.props.type,
       data: this.props.data,
       selected: "",
-      delete: 0,
       isEdit: false,
       flatListRefreshings: this.props,
+      loadIng: false,
     };
   }
   deleteDiary(id) {
+    this.setState({ loadIng: true });
     db.transaction(
       (tx) => {
         tx.executeSql(`delete from diary where id = ?;`, [id]);
       },
       null,
-      this.setState({ delete: delete +1 })
+      this.setState({ loadIng: false })
     );
   }
   contentBox(title, content, type) {
     const TYPE = ["沒有分類", "心情", "筆記", "記帳", "隨筆"];
-    const COLOR = ["#292D0C", "#B92061", "#E2582F", "#C0A827", "#F9FDB3"];
+    const COLOR = ["#F4F482", "#B92061", "#E2582F", "#C0A827", "#F9FDB3"];
     console.log(type);
     return (
       <View
@@ -70,7 +72,8 @@ class Item extends React.Component {
           style={{
             justifyContent: "center",
             alignItems: "center",
-            marginLeft: 10,
+            borderRadius: 10,
+            marginLeft: 1,
             width: 100,
             borderRightWidth: 2,
             borderRightColor: "#A8BDB8",
@@ -95,56 +98,64 @@ class Item extends React.Component {
   }
   handlePress = (index) => this.setState({ selected: index });
   render() {
-    const { id, content, title, data, selected, type } = this.state;
-    return (
-      <TouchableOpacity
-        onLongPress={() => this.refRBSheet.open()}
-        onPress={() => {
-          RootNavigation.navigate("Diary", { cardId: id.toString() });
-        }}
-        style={[
-          styles.item,
-          { backgroundColor: selected ? "#DCDCDC" : "#F8F8FF" },
-        ]}
-      >
-        {this.contentBox(content, title, type)}
-        <RBSheet
-          ref={(ref) => {
-            this.refRBSheet = ref;
+    if (this.state.loadIng === true) {
+      return (
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    } else {
+      const { id, content, title, data, selected, type } = this.state;
+      return (
+        <TouchableOpacity
+          onLongPress={() => this.refRBSheet.open()}
+          onPress={() => {
+            RootNavigation.navigate("Diary", { cardId: id.toString() });
           }}
-          height={100}
-          duration={250}
-          customStyles={{
-            container: {
-              justifyContent: "center",
-              alignItems: "center",
-            },
-          }}
+          style={[
+            styles.item,
+            { backgroundColor: selected ? "#DCDCDC" : "#F8F8FF" },
+          ]}
         >
-          <TouchableOpacity
-            onPress={() => {
-              RootNavigation.navigate("New", {
-                cardId: id.toString(),
-                type: 1,
-              }),
-                this.refRBSheet.close();
+          {this.contentBox(content, title, type)}
+          <RBSheet
+            ref={(ref) => {
+              this.refRBSheet = ref;
             }}
-            style={styles.button}
-          >
-            <Text style={styles.buttonEdit}>編輯</Text>
-          </TouchableOpacity>
-          <View style={styles.buttonLine}></View>
-          <TouchableOpacity
-            onPress={() => {
-              this.deleteDiary(id), this.refRBSheet.close();
+            height={100}
+            duration={250}
+            customStyles={{
+              container: {
+                justifyContent: "center",
+                alignItems: "center",
+              },
             }}
-            style={styles.button}
           >
-            <Text style={styles.buttonDelete}>刪除</Text>
-          </TouchableOpacity>
-        </RBSheet>
-      </TouchableOpacity>
-    );
+            <TouchableOpacity
+              onPress={() => {
+                RootNavigation.navigate("New", {
+                  cardId: id.toString(),
+                  type: 1,
+                }),
+                  this.refRBSheet.close();
+              }}
+              style={styles.button}
+            >
+              <Text style={styles.buttonEdit}>編輯</Text>
+            </TouchableOpacity>
+            <View style={styles.buttonLine}></View>
+            <TouchableOpacity
+              onPress={() => {
+                this.deleteDiary(id), this.refRBSheet.close();
+              }}
+              style={styles.button}
+            >
+              <Text style={styles.buttonDelete}>刪除</Text>
+            </TouchableOpacity>
+          </RBSheet>
+        </TouchableOpacity>
+      );
+    }
   }
 }
 //
@@ -152,6 +163,7 @@ class Item extends React.Component {
 //
 export default class HomeCard extends Component {
   state = {
+    isLoading: false,
     items: null,
     DATA: [],
     refreshing: false,
@@ -175,34 +187,25 @@ export default class HomeCard extends Component {
       );
     });
   }
-  updateTimer() {
+  _updateTimer() {
     this.timer1 = setInterval(() => {
       this.update();
       this.Diary();
     }, 5000);
   }
   componentDidMount() {
-    //this._DELETE_TABLE()
-    //               here to get Data
-    db.transaction((tx) => {
-      tx.executeSql(
-        "create table if not exists diary (id integer primary key not null, date text, title text,content text,type integer);",
-        [],
-        (_, { rows }) => console.log("開啟資料庫成功")
-      );
-    });
     this.getData();
-    this.updateTimer();
   }
-  //
+
   componentDidUpdate() {}
-  //               here to unSub
+
   componentWillUnmount() {
     this.timer1 && clearInterval(this.timer1);
     console.log("Unmounted");
   }
-  // data
+
   update() {
+    const { items2 } = this.state.items;
     db.transaction((tx) => {
       tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
         this.setState({ items: _array })
@@ -210,16 +213,27 @@ export default class HomeCard extends Component {
     });
     this.setState({
       refreshing: false,
+      items: items2,
+      loadIng:false
       //    flatListRefreshing: !this.state.flatListRefreshing,
     });
     console.log("update");
   }
   getData() {
+    this.setState({loadIng:true})
+    db.transaction((tx) => {
+      tx.executeSql(
+        "create table if not exists diary (id integer primary key not null, date text, title text,content text,type integer);",
+        [],
+        (_, { rows }) => console.log("開啟資料庫成功")
+      );
+    });
     db.transaction((tx) => {
       tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
         this.setState({ items: _array })
       );
     });
+    this.setState({loadIng:false})
   }
   //實驗用
   Diary() {
@@ -245,9 +259,9 @@ export default class HomeCard extends Component {
   // reFresh
 
   handleRefresh = () => {
-    const { items2 } = this.state.items;
     this.setState(
       {
+        loadIng:true,
         refreshing: true,
       },
       (e) => {
@@ -266,56 +280,64 @@ export default class HomeCard extends Component {
     />
   );
   render() {
-    const { items, DATA } = this.state;
-    const { search } = this.state;
-    if (items === null) {
-      console.log("erro");
-      return null;
-    }
-    return (
-      <SafeAreaView style={styles.sectionContainer}>
-        <SearchBar
-          lightTheme
-          round
-          autoCorrect={false}
-          placeholder="Type Here..."
-          onChangeText={(text) => this.searchFilterFunction(text)}
-          value={search}
-        />
-        <FlatList
-          ListEmptyComponent={(e) => (
-            <View style={{ flex: 1, alignItems: "center" }}>
-              <Text style={{ color: "#000000", fontSize: 25 }}>
-                還沒有任何內容窩{" "}
-              </Text>
-            </View>
-          )}
-          ListFooterComponent={(e) =>
-            this.state.isEmpty ? (
+    if (this.state.loadIng === true) {
+      return (
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    } else {
+      const { items, DATA } = this.state;
+      const { search } = this.state;
+      if (items === null) {
+        console.log("erro");
+        return null;
+      }
+      return (
+        <SafeAreaView style={styles.sectionContainer}>
+          <SearchBar
+            lightTheme
+            round
+            autoCorrect={false}
+            placeholder="Type Here..."
+            onChangeText={(text) => this.searchFilterFunction(text)}
+            value={search}
+          />
+          <FlatList
+            ListEmptyComponent={(e) => (
               <View style={{ flex: 1, alignItems: "center" }}>
                 <Text style={{ color: "#000000", fontSize: 25 }}>
-                  已經到底部了!!!!
+                  還沒有任何內容窩{" "}
                 </Text>
               </View>
-            ) : null
-          }
-          data={items}
-          refreshing={true}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={5}
-          keyExtractor={(item) => item.id.toString()}
-          refreshing={this.state.refreshing}
-          onRefresh={this.handleRefresh}
-          extraData={this.state}
-          renderItem={this.renderItem}
-        />
-        <Navigation
-          rightClick={(e) => RootNavigation.navigate("New", { type: 0 })}
-          rightText={"新增日記"}
-        />
-        {console.log(this.state.flatListRefreshing)}
-      </SafeAreaView>
-    );
+            )}
+            ListFooterComponent={(e) =>
+              this.state.isEmpty ? (
+                <View style={{ flex: 1, alignItems: "center" }}>
+                  <Text style={{ color: "#000000", fontSize: 25 }}>
+                    已經到底部了!!!!
+                  </Text>
+                </View>
+              ) : null
+            }
+            data={items}
+            refreshing={true}
+            removeClippedSubviews={true}
+            maxToRenderPerBatch={5}
+            keyExtractor={(item) => item.id.toString()}
+            refreshing={this.state.refreshing}
+            onRefresh={this.handleRefresh}
+            extraData={this.state}
+            renderItem={this.renderItem}
+          />
+          <Navigation
+            rightClick={(e) => RootNavigation.navigate("New", { type: 0 })}
+            rightText={"新增日記"}
+          />
+          {console.log(this.state.flatListRefreshing)}
+        </SafeAreaView>
+      );
+    }
   }
 }
 //style

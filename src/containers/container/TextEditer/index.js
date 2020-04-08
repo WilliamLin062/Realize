@@ -9,6 +9,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Picker,
+  ActivityIndicator,
   ToastAndroid,
 } from "react-native";
 import Constants from "expo-constants";
@@ -23,7 +24,7 @@ import {
   BackDefaultColor,
 } from "../../../utils";
 import * as RootNavigation from "../../../screens/RootNavigation";
-import { SearchBar } from 'react-native-elements';
+import { SearchBar } from "react-native-elements";
 const db = SQLite.openDatabase("db.db");
 export class Edit extends Component {
   static navigationOptions = {
@@ -33,21 +34,23 @@ export class Edit extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedValue: null,
+      selectedValue: 0,
       items: null,
       text: "",
       title: "",
       content: "",
       date: new Date(),
       selected: false,
-      type: null,
+      type: 0,
+      loadIng: false,
     };
   }
 
   async componentDidMount() {
     const { params } = this.props.route;
+    this.setState({ loadIng: true });
     if (params.type === 0) {
-      db.transaction((tx) => {
+    await  db.transaction((tx) => {
         tx.executeSql(
           "create table if not exists diary (id integer primary key not null, date text, title text,content text,type integer);"
         );
@@ -55,17 +58,17 @@ export class Edit extends Component {
           console.log(JSON.stringify(_array))
         );
       });
+      this.setState({ loadIng: false });
     }
 
-    if (params.type === 1) {
-      db.transaction((tx) => {
+   if (params.type === 1) {
+  await    db.transaction((tx) => {
         tx.executeSql(
           "select * from diary where id = ?",
           [params.cardId],
           (_, { rows: { _array } }) => {
             console.log(JSON.stringify(_array)),
               this.setState({ items: _array });
-            console.log("diary    " + this.state.items);
           }
         );
       });
@@ -78,11 +81,13 @@ export class Edit extends Component {
     console.log("---------------------");
     const title = items.map((item) => Object.values(item)[2]);
     const content = items.map((item) => Object.values(item)[3]);
+    const types = items.map((item) => Object.values(item)[4]);
     console.log("---------------------");
     console.log("測試取直" + "  " + content);
     console.log("測試取直" + "  " + title);
+    console.log("測試取直" + "  " + types);
     // console.log("測試取直" + "  " + item);
-    this.setState({ content: content, title: title });
+    this.setState({ content: content, title: title,selectedValue:types,loadIng: false });
   }
   add = (text) => {
     const { params } = this.props.route;
@@ -111,9 +116,10 @@ export class Edit extends Component {
           (_, { rows: { _array } }) => console.log(JSON.stringify(_array))
         );
       });
+      RootNavigation.goBack()
     }
     if (params.type == 1) {
-      console.log("編輯")
+      console.log("編輯");
       db.transaction((tx) => {
         tx.executeSql(
           "update diary set(content,title,date,type)=(?,?,?,?) where id= ?",
@@ -123,21 +129,31 @@ export class Edit extends Component {
             this.state.date.getFullYear(),
             this.state.type,
             params.cardId,
-          ],
-          ToastAndroid.show("更新成功!", ToastAndroid.SHORT)
+          ]
         );
         tx.executeSql(
           "select * from diary order by content",
           [],
-          (_, { rows: { _array } }) => alert(JSON.stringify(_array))
+          (_, { rows: { _array } }) => console.log(JSON.stringify(_array))
         );
       });
+      RootNavigation.goBack()
+      ToastAndroid.show("更新成功!", ToastAndroid.SHORT);
     }
   };
   render() {
+    const typeTitle=["選擇分類","心情","筆記","記帳","創作"]
+    const selectedValue=this.state
+    if (this.state.loadIng === true) {
+      return (
+        <View style={[styles.container, styles.horizontal]}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      );
+    }else
     return (
       <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingView style={styles.container}>
+        <KeyboardAvoidingView>
           <ScrollView
             style={{
               flex: 1,
@@ -146,21 +162,23 @@ export class Edit extends Component {
             <View style={styles.title}>
               <Picker
                 selectedValue={this.state.selectedValue}
-                style={{ height: 50, width: 150 ,fontSize:12}}
-                mode="dropdown"
-                onValueChange={(itemValue, itemIndex) =>
-                  this.setState({type:itemIndex,selectedValue:itemValue})
-                }
+                style={{ height: 50, width: 150, fontSize: 12 }}
+                mode={"dialog"}
+                prompt={typeTitle[selectedValue]}
+                onValueChange={(itemValue, itemIndex) =>{
+                  console.log("select"+"   "+itemValue+"    "+itemIndex),
+                  this.setState({ type: itemIndex, selectedValue: itemValue })}
+                                  }
               >
                 <Picker.Item label="選擇分類" value="0" />
                 <Picker.Item label="心情" value="1" />
                 <Picker.Item label="筆記" value="2" />
                 <Picker.Item label="記帳" value="3" />
-                <Picker.Item label="隨筆" value="4" />
+                <Picker.Item label="創作" value="4" />
               </Picker>
               <TextInput
                 placeholder="輸入標題"
-                style={{fontSize:18,width:250}}
+                style={{ fontSize: 18, width: 250 }}
                 maxLength={40}
                 onChangeText={(title) => this.setState({ title })}
                 value={this.state.title.toString()}
@@ -173,7 +191,7 @@ export class Edit extends Component {
                   flex: 1,
                   minHeight: 600,
                   borderRadius: 40,
-                  fontSize:18
+                  fontSize: 18,
                 }}
                 maxLength={2000}
                 onChangeText={(content) => this.setState({ content })}
@@ -189,8 +207,6 @@ export class Edit extends Component {
               title="存檔"
               onPress={(e) => {
                 this.add(this.state.content, this.state.title, this.state.date);
-                RootNavigation.goBack();
-                console.log("存檔");
               }}
             />
           </ScrollView>
@@ -219,7 +235,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderRadius: 10,
     backgroundColor: "#ffffff",
-    width: ScreenWidth - 20,
+    width: ScreenWidth,
     elevation: 5,
   },
   title: {
