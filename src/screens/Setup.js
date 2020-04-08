@@ -8,7 +8,6 @@ import { navigationRef } from "./RootNavigation";
 /*SCREENS*/
 import  {Edit}  from "../containers/container/TextEditer";
 import Home from "./home/Home";
-import NewPost from "./NewPost";
 import Diary from "./Diary";
 
 /*function NotificationsScreen({ navigation }) {

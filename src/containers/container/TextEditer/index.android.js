@@ -5,12 +5,12 @@ import {
   Text,
   Button,
   KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   SafeAreaView,
   Picker,
   ActivityIndicator,
   ToastAndroid,
+  Platform
 } from "react-native";
 import Constants from "expo-constants";
 import * as SQLite from "expo-sqlite";
@@ -48,6 +48,7 @@ export class Edit extends Component {
 
   async componentDidMount() {
     const { params } = this.props.route;
+    console.log("android")
     this.setState({ loadIng: true });
     if (params.type === 0) {
     await  db.transaction((tx) => {
