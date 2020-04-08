@@ -9,7 +9,6 @@
       "android",
       "web"
     ],
-
     "version": "1.0.0",
     "orientation": "portrait",
     "splash": {
@@ -26,10 +25,9 @@
     "ios": {
       "supportsTablet": true
     },
-    
     "android": {
-    "package": "com.williamsProject.Realize",
-    "versionCode": 1
+      "package": "com.williamsProject.Realize",
+      "versionCode": 1
     },
     "description": "a simple diary",
     "githubUrl": "https://github.com/WilliamLin062/Realize"

@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     margin: 7,
     flexWrap: "nowrap",
-    fontFamily: "AppleSDGothicNeo-Regular",
+    fontFamily: "Roboto",
   },
   contentBox: {
     flex: 1,
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
     borderBottomWidth: 1,
     borderColor: "#dfdfdf",
-    fontFamily: "Avenir-Black",
+    fontFamily: "monospace",
   },
 });
 /**/

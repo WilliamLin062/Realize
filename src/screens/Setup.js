@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, View, Modal } from "react-native";
+import { Button, View, Modal,StatusBar } from "react-native";
 import { createDrawerNavigator, StackActions } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -7,7 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { navigationRef } from "./RootNavigation";
 /*SCREENS*/
 import  {Edit}  from "../containers/container/TextEditer";
-import Home from "./home/Home";
+import Home from "./home";
 import Diary from "./Diary";
 
 /*function NotificationsScreen({ navigation }) {

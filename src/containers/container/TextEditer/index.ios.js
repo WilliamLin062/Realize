@@ -91,17 +91,17 @@ export class Edit extends Component {
     const { items } = this.state;
     console.log("diary    " + items);
     console.log("---------------------");
-    const title = items.map((item) => Object.values(item)[2]);
-    const content = items.map((item) => Object.values(item)[3]);
+    const titles = items.map((item) => Object.values(item)[2]);
+    const contents = items.map((item) => Object.values(item)[3]);
     const types = items.map((item) => Object.values(item)[4]);
     console.log("---------------------");
-    console.log("測試取直" + "  " + content);
-    console.log("測試取直" + "  " + title);
+    console.log("測試取直" + "  " + contents);
+    console.log("測試取直" + "  " + titles);
     console.log("測試取直" + "  " + types);
     // console.log("測試取直" + "  " + item);
     this.setState({
-      content: content,
-      title: title,
+      content: contents,
+      title: titles,
       selectedValue: types,
       loadIng: false,
     });
@@ -109,6 +109,7 @@ export class Edit extends Component {
   add = (text) => {
     const { params } = this.props.route;
     const { goBack } = this.props.navigation;
+    const { content, title, date, type } = this.state;
     const fullDate = [this.state.date.getFullYear];
     // is text empty?
     if (text === null || text === "") {
@@ -119,12 +120,7 @@ export class Edit extends Component {
       db.transaction((tx) => {
         tx.executeSql(
           "insert into diary (content,title,date,type) values (?,?,?,?)",
-          [
-            this.state.content,
-            this.state.title,
-            this.state.date.getFullYear(),
-            this.state.type,
-          ],
+          [content, title, date.getFullYear(), type],
           alert("存檔成功")
         );
         tx.executeSql(
@@ -137,16 +133,11 @@ export class Edit extends Component {
     }
     if (params.type == 1) {
       console.log("編輯");
+
       db.transaction((tx) => {
         tx.executeSql(
           "update diary set(content,title,date,type)=(?,?,?,?) where id= ?",
-          [
-            this.state.content,
-            this.state.title,
-            this.state.date.getFullYear(),
-            this.state.type,
-            params.cardId,
-          ]
+          [content.toString() ,title.toString(), date.getFullYear(), type, params.cardId]
         );
         tx.executeSql(
           "select * from diary order by content",
@@ -200,7 +191,6 @@ export class Edit extends Component {
             <ScrollView
               style={{
                 flex: 1,
-      
               }}
             >
               <View style={styles.title}>
@@ -224,7 +214,7 @@ export class Edit extends Component {
                   placeholder="輸入內容"
                   style={{
                     flex: 1,
-                    minHeight:600,
+                    minHeight: 600,
                     borderRadius: 40,
                     fontSize: 18,
                   }}
@@ -263,7 +253,7 @@ const styles = StyleSheet.create({
   },
   contentTitle: {
     height: 50,
-    fontFamily: "monospace",
+    fontFamily: "Avenir-Black",
     fontSize: 20,
     fontStyle: "normal",
     fontWeight: "900",
