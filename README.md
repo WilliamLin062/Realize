@@ -2,11 +2,11 @@
     簡易方便的記事app
    
     依賴項
-      `` `react-native 
+      ```react-native 
           expo
           expo-Sqlite
           react-native-raw-bottom-sheet
-          native-element` ``    
+          native-element```    
       
     
  ![image](https://github.com/WilliamLin062/Realize/blob/master/preview.gif)
@@ -26,6 +26,7 @@
     yarn start
 
 **常見問題**
+    
     Q:新增 編輯之後沒出現在首頁
     A:下拉選單重新整理
     
