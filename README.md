@@ -3,7 +3,8 @@
     大學專題
     目前目標是做出日記app
     使用react native開發android APP
-
+    
+ ！[image](https://github.com/WilliamLin062/Realize/blob/master/preview.gif)
 ## How to use?  
 
 
