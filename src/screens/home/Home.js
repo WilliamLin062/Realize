@@ -192,7 +192,7 @@ export default class HomeCard extends Component {
       );
     });
     this.getData();
-   // this.updateTimer();
+    this.updateTimer();
   }
   //
   componentDidUpdate() {}
@@ -205,12 +205,12 @@ export default class HomeCard extends Component {
   update() {
     db.transaction((tx) => {
       tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
-        this.setState({
-          items: _array,
-          refreshing: false,
-          //    flatListRefreshing: !this.state.flatListRefreshing,
-        })
+        this.setState({ items: _array })
       );
+    });
+    this.setState({
+      refreshing: false,
+      //    flatListRefreshing: !this.state.flatListRefreshing,
     });
     console.log("update");
   }
@@ -231,15 +231,16 @@ export default class HomeCard extends Component {
   //搜尋功能 研究中
   searchFilterFunction = (text) => {
     const { items } = this.state;
-    var input='%'+text+'%'
-    console.log(input)
+    var input = "%" + text + "%";
+    console.log(input);
     db.transaction((tx) => {
-      tx.executeSql(`select * from diary where title like ?;`, [input], (_, { rows: { _array } }) =>
-        this.setState({ items: _array })
- 
+      tx.executeSql(
+        `select * from diary where title like ?;`,
+        [input],
+        (_, { rows: { _array } }) => this.setState({ items: _array })
       );
     });
-    console.log("change")
+    console.log("change");
   };
   // reFresh
 
@@ -248,7 +249,6 @@ export default class HomeCard extends Component {
     this.setState(
       {
         refreshing: true,
-        items: items2,
       },
       (e) => {
         this.update();
