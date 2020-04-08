@@ -287,7 +287,7 @@ export default class HomeCard extends Component {
         </View>
       );
     } else {
-      const { items, DATA } = this.state;
+      const { items} = this.state;
       const { search } = this.state;
       if (items === null) {
         console.log("erro");
@@ -299,8 +299,8 @@ export default class HomeCard extends Component {
             lightTheme
             round
             autoCorrect={false}
-            placeholder="Type Here..."
-            onChangeText={(text) => this.searchFilterFunction(text)}
+            placeholder="搜尋標題..."
+            onChangeText={(text) =>{ this.setState({search:text}) ,this.searchFilterFunction(text)}}
             value={search}
           />
           <FlatList
