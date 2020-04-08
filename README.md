@@ -3,10 +3,10 @@
     簡易方便的記事app
 
 依賴項
-    ```react-native
-        expo
-        expo-Sqlite
-        react-native-raw-bottom-sheet
+    ```react-native ,
+        expo ,
+        expo-Sqlite ,
+        react-native-raw-bottom-sheet ,
         native-element```
 
  ![image](https://github.com/WilliamLin062/Realize/blob/master/preview.gif)
