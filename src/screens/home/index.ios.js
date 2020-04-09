@@ -194,13 +194,18 @@ export default class HomeCard extends Component {
   }
   unsubscribe() {
     this.props.navigation.addListener("focus", () => {
-      console.log("foucs"),
-      this.update()
+      console.log("foucs"), this.update();
     });
   }
   componentDidMount() {
     this.getData();
-    setTimeout(() => {
+   /* setTimeout(() => {
+      this.foucs = this.props.navigation.addListener("focus", () => {
+        console.log("foucs"), this.update();
+      });
+    }, 2000);*/
+
+     setTimeout(() => {
       this.unsubscribe()
     }, 2000); 
   }
@@ -209,6 +214,7 @@ export default class HomeCard extends Component {
 
   componentWillUnmount() {
     this.timer1 && clearInterval(this.timer1);
+    this.unsubscribe()
     console.log("Unmounted");
   }
 
@@ -223,7 +229,6 @@ export default class HomeCard extends Component {
       refreshing: false,
       items: items2,
       loadIng: false,
-      //    flatListRefreshing: !this.state.flatListRefreshing,
     });
     console.log("update");
   }

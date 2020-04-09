@@ -193,22 +193,21 @@ export default class HomeCard extends Component {
   }
   unsubscribe() {
     this.props.navigation.addListener("focus", () => {
-      console.log("foucs"),
-      this.update()
+      console.log("foucs"), this.update();
     });
   }
   componentDidMount() {
     this.getData();
     setTimeout(() => {
-      this.unsubscribe()
-    }, 5000); 
+      this.unsubscribe();
+    }, 2000);
   }
 
   componentDidUpdate() {}
 
   componentWillUnmount() {
     this.timer1 && clearInterval(this.timer1);
-    this.unsubscribe().remove()
+    this.unsubscribe();
     console.log("Unmounted");
   }
 
