@@ -193,7 +193,7 @@ export default class HomeCard extends Component {
     }, 5000);
   }
   unsubscribe() {
-    this.props.navigation.addListener("focus", () => {
+    this.props.navigation.addListener("focus", (e) => {
       console.log("foucs"), this.update();
     });
   }
@@ -214,7 +214,7 @@ export default class HomeCard extends Component {
 
   componentWillUnmount() {
     this.timer1 && clearInterval(this.timer1);
-    this.unsubscribe()
+    this.unsubscribe(e)
     console.log("Unmounted");
   }
 

@@ -17,9 +17,7 @@
     
 1.[點選連結](https://expo.io/@william113088/realize)
 
-2.在手機下載Expo Client
-
-[IOS](https://apps.apple.com/us/app/expo-client/id982107779)
+2.在手機下載Expo Client(只支援安卓)
 
 [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
 
