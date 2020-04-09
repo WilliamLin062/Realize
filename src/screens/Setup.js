@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Button, View, Modal,StatusBar } from "react-native";
+import { Button, View, Modal, StatusBar } from "react-native";
 import { createDrawerNavigator, StackActions } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { navigationRef } from "./RootNavigation";
 /*SCREENS*/
-import  {Edit}  from "../containers/container/TextEditer";
+import { Edit } from "../containers/container/TextEditer";
 import Home from "./home";
 import Diary from "./Diary";
 
@@ -33,19 +33,26 @@ export default function Setup() {
         <Stack.Screen
           name="New"
           component={Edit}
-          options={{ title: "新增文章" }}
-          initialParams={{ cardId: null ,isEdit:false,type:null}}
- 
-          
+          options={{
+            title: "新增文章",
+            headerRight: () => (
+              <Button
+                onPress={() => alert("This is a button!")}
+                title="存檔"
+                color="#000000"
+              />
+            ),
+          }}
+          initialParams={{ cardId: null, isEdit: false, type: null }}
         />
-         <Stack.Screen
+        <Stack.Screen
           name="Diary"
           component={Diary}
           options={{ title: "閱讀文章" }}
-          initialParams={{ cardId: null }}/>
-      
+          initialParams={{ cardId: null }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-  /*   */
+/*   */

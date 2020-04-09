@@ -61,6 +61,17 @@ export class Edit extends Component {
   async componentDidMount() {
     const { params } = this.props.route;
     this.setState({ loadIng: true });
+    this.props.navigation.setOptions({
+      headerRight: () => (
+        <Button
+          style={{ fontSize: 20 }}
+          onPress={(e) => {
+            this.add(this.state.content, this.state.title, this.state.date);
+          }}
+          title="保存"
+        />
+      ),
+    });
     if (params.type === 0) {
       await db.transaction((tx) => {
         tx.executeSql(
@@ -137,7 +148,13 @@ export class Edit extends Component {
       db.transaction((tx) => {
         tx.executeSql(
           "update diary set(content,title,date,type)=(?,?,?,?) where id= ?",
-          [content.toString() ,title.toString(), date.getFullYear(), type, params.cardId]
+          [
+            content.toString(),
+            title.toString(),
+            date.getFullYear(),
+            type,
+            params.cardId,
+          ]
         );
         tx.executeSql(
           "select * from diary order by content",
@@ -153,6 +170,7 @@ export class Edit extends Component {
     ActionSheetIOS.showActionSheetWithOptions(
       {
         options: ["選擇分類", "心情", "筆記", "記帳", "創作"],
+        tintColor: "#000000",
       },
       (buttonIndex) => {
         if (buttonIndex === 0) {
@@ -194,11 +212,26 @@ export class Edit extends Component {
               }}
             >
               <View style={styles.title}>
-                <Button
-                  onPress={(e) => this.onPress()}
-                  color="#101010"
-                  title={typeTitle[type]}
-                />
+                <View
+                  style={{
+                    borderRadius: 5,
+                    shadowColor: "black",
+                    shadowRadius: 20,
+                    borderWidth:1,
+                    marginLeft:5,
+                    marginBottom:5,
+                    backgroundColor: "#FFFFFC",
+                    justifyContent: "center",
+                    width:90
+                  }}
+                >
+                  <Button
+                    onPress={(e) => this.onPress()}
+                    color="#231C07"
+                    title={typeTitle[type]}
+                  />
+                </View>
+
                 <TextInput
                   placeholder="輸入標題"
                   style={{ fontSize: 18, width: 250, marginLeft: 10 }}
@@ -226,18 +259,6 @@ export class Edit extends Component {
                   keyboardAppearance={"light"}
                 />
               </View>
-
-              <Button
-                style={{ elevation: 5, borderRadius: 20 }}
-                title="存檔"
-                onPress={(e) => {
-                  this.add(
-                    this.state.content,
-                    this.state.title,
-                    this.state.date
-                  );
-                }}
-              />
             </ScrollView>
           </KeyboardAvoidingView>
         </SafeAreaView>
@@ -280,3 +301,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
 });
+/*<Button
+style={{ elevation: 5, borderRadius: 20 }}
+title="存檔"
+onPress={(e) => {
+  this.add(
+    this.state.content,
+    this.state.title,
+    this.state.date
+  );
+}}
+/>*/
