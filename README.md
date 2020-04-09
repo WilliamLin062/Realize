@@ -10,32 +10,34 @@
         native-element```
 
  ![image](https://github.com/WilliamLin062/Realize/blob/master/preview.gif)
-
+-------------------------------------------------
 ## How to use  
 
 **使用EXPO瀏覽**
+    
+1.[點選連結](https://expo.io/@william113088/realize)
 
-   1.[點選連結](https://expo.io/@william113088/realize)
+2.在手機下載Expo Client
 
-   2.在手機下載Expo Client
+[IOS](https://apps.apple.com/us/app/expo-client/id982107779)
 
-     [IOS](https://apps.apple.com/us/app/expo-client/id982107779)
+[Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
 
-     [Android](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US)
+3.使用手機掃描右邊QRcode並在Expo Client中開啟 
 
-   3.使用手機掃描右邊QRcode並在Expo Client中開啟
+-------------------------------------------------
 
 **拉取專案**  
 
-     ```git clone https://github.com/WilliamLin062/Realize.git```
+     git clone https://github.com/WilliamLin062/Realize.git
 
 **安裝**  
 
-    ```yarn install```
+    yarn install
 
 **啟動**  
 
-      ```yarn start```
+      yarn start
 
 **常見問題**
 
