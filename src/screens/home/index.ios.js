@@ -192,8 +192,17 @@ export default class HomeCard extends Component {
       this.Diary();
     }, 5000);
   }
+  unsubscribe() {
+    this.props.navigation.addListener("focus", () => {
+      console.log("foucs"),
+      this.update()
+    });
+  }
   componentDidMount() {
     this.getData();
+    setTimeout(() => {
+      this.unsubscribe()
+    }, 2000); 
   }
 
   componentDidUpdate() {}

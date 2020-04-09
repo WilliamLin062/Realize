@@ -9,7 +9,7 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { Navigation } from "../../conponets/Navigation";
 import Constants from "expo-constants";
@@ -191,14 +191,24 @@ export default class HomeCard extends Component {
       this.Diary();
     }, 5000);
   }
+  unsubscribe() {
+    this.props.navigation.addListener("focus", () => {
+      console.log("foucs"),
+      this.update()
+    });
+  }
   componentDidMount() {
     this.getData();
+    setTimeout(() => {
+      this.unsubscribe()
+    }, 5000); 
   }
 
   componentDidUpdate() {}
 
   componentWillUnmount() {
     this.timer1 && clearInterval(this.timer1);
+    this.unsubscribe().remove()
     console.log("Unmounted");
   }
 
@@ -212,13 +222,13 @@ export default class HomeCard extends Component {
     this.setState({
       refreshing: false,
       items: items2,
-      loadIng:false
+      loadIng: false,
       //    flatListRefreshing: !this.state.flatListRefreshing,
     });
     console.log("update");
   }
   getData() {
-    this.setState({loadIng:true})
+    this.setState({ loadIng: true });
     db.transaction((tx) => {
       tx.executeSql(
         "create table if not exists diary (id integer primary key not null, date text, title text,content text,type integer);",
@@ -231,7 +241,7 @@ export default class HomeCard extends Component {
         this.setState({ items: _array })
       );
     });
-    this.setState({loadIng:false})
+    this.setState({ loadIng: false });
   }
   //實驗用
   Diary() {
@@ -259,7 +269,7 @@ export default class HomeCard extends Component {
   handleRefresh = () => {
     this.setState(
       {
-        loadIng:true,
+        loadIng: true,
         refreshing: true,
       },
       (e) => {
@@ -285,7 +295,7 @@ export default class HomeCard extends Component {
         </View>
       );
     } else {
-      const { items} = this.state;
+      const { items } = this.state;
       const { search } = this.state;
       if (items === null) {
         console.log("erro");
@@ -299,7 +309,9 @@ export default class HomeCard extends Component {
             autoCorrect={false}
             placeholder="搜尋標題..."
             clearTextOnFocus={true}
-            onChangeText={(text) =>{ this.setState({search:text}) ,this.searchFilterFunction(text)}}
+            onChangeText={(text) => {
+              this.setState({ search: text }), this.searchFilterFunction(text);
+            }}
             value={search}
           />
           <FlatList
