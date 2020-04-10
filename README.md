@@ -9,7 +9,14 @@
         react-native-raw-bottom-sheet ,
         native-element```
 
+Android
+
  ![image](https://github.com/WilliamLin062/Realize/blob/master/preview.gif)
+
+IPHONE
+
+ ![image](https://github.com/WilliamLin062/Realize/blob/master/preview-ios.gif)
+
 -------------------------------------------------
 ## How to use  
 

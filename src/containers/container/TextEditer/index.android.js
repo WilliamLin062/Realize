@@ -127,7 +127,7 @@ export class Edit extends Component {
             this.state.content,
             this.state.title,
             this.state.date.getFullYear(),
-            this.state.type,
+            this.state.selectedValue,
           ],
           ToastAndroid.show("存檔成功!", ToastAndroid.SHORT)
         );

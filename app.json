@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Realize",
-    "slug": "realize",
+    "slug": "realize-ios",
     "privacy": "public",
     "sdkVersion": "36.0.0",
     "platforms": [
