@@ -11,7 +11,7 @@
 
 Android
 
- ![image](https://github.com/WilliamLin062/Realize/blob/master/preview.gif)
+ ![image](https://github.com/WilliamLin062/Realize/blob/master/preview-android.gif)
 
 IPHONE
 
