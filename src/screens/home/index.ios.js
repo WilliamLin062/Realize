@@ -145,7 +145,7 @@ class Item extends React.Component {
             <View style={styles.buttonLine}></View>
             <TouchableOpacity
               onPress={() => {
-                this.deleteDiary(id), this.refRBSheet.close();
+                this.deleteDiary(id), this.refRBSheet.close(),this.props.update()
               }}
               style={styles.button}
             >
@@ -199,38 +199,14 @@ export default class HomeCard extends Component {
   }
   componentDidMount() {
     this.getData();
-   /* setTimeout(() => {
-      this.foucs = this.props.navigation.addListener("focus", () => {
-        console.log("foucs"), this.update();
-      });
-    }, 2000);*/
-
      setTimeout(() => {
       this.unsubscribe()
-    }, 2000); 
+    }, 3000); 
   }
-
-  componentDidUpdate() {}
-
   componentWillUnmount() {
     this.timer1 && clearInterval(this.timer1);
-    this.unsubscribe(e)
+    this.unsubscribe()
     console.log("Unmounted");
-  }
-
-  update() {
-    const { items2 } = this.state.items;
-    db.transaction((tx) => {
-      tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
-        this.setState({ items: _array })
-      );
-    });
-    this.setState({
-      refreshing: false,
-      items: items2,
-      loadIng: false,
-    });
-    console.log("update");
   }
   getData() {
     this.setState({ loadIng: true });
@@ -248,6 +224,21 @@ export default class HomeCard extends Component {
     });
     this.setState({ loadIng: false });
   }
+  update() {
+    const { items2 } = this.state.items;
+    db.transaction((tx) => {
+      tx.executeSql(`select * from diary;`, [], (_, { rows: { _array } }) =>
+        this.setState({ items: _array })
+      );
+    });
+    this.setState({
+      refreshing: false,
+      items: items2,
+      loadIng: false,
+    });
+    console.log("update");
+  }
+
   //實驗用
   Diary() {
     const { items } = this.state;
@@ -290,6 +281,7 @@ export default class HomeCard extends Component {
       content={item.content}
       type={item.type}
       onPress={(e) => item.id}
+      update={(e)=>{this.update()}}
     />
   );
   render() {

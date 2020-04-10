@@ -217,12 +217,12 @@ export class Edit extends Component {
                     borderRadius: 5,
                     shadowColor: "black",
                     shadowRadius: 20,
-                    borderWidth:1,
-                    marginLeft:5,
-                    marginBottom:5,
+                    borderWidth: 1,
+                    marginLeft: 5,marginTop:6,
+                    marginBottom: 5,
                     backgroundColor: "#FFFFFC",
                     justifyContent: "center",
-                    width:90
+                    width: 90,
                   }}
                 >
                   <Button
@@ -250,6 +250,7 @@ export class Edit extends Component {
                     minHeight: 600,
                     borderRadius: 40,
                     fontSize: 18,
+                    margin: 5,
                   }}
                   maxLength={5000}
                   onChangeText={(content) => this.setState({ content })}
@@ -270,10 +271,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#FFFAF9",
   },
   contentTitle: {
-    height: 50,
+    height: 60,
     fontFamily: "Avenir-Black",
     fontSize: 20,
     fontStyle: "normal",
@@ -283,22 +284,36 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 10,
     marginBottom: 10,
+    margin: 1,
+  // borderWidth: 1,
     borderRadius: 10,
     backgroundColor: "#ffffff",
-    width: ScreenWidth,
-
+    width: ScreenWidth - 30,
+    shadowColor: "#000000",
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    shadowOffset: {
+      height: 4,
+      width: 5,
+    },
     elevation: 5,
   },
   title: {
     flex: 1,
-    height: 50,
+    height: 60,
     flexDirection: "row",
     marginTop: 30,
     marginBottom: 10,
     borderRadius: 5,
     backgroundColor: "#ffffff",
     elevation: 5,
-    borderBottomWidth: 1,
+    shadowColor: "#000000",
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
   },
 });
 /*<Button

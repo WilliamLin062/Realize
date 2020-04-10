@@ -134,6 +134,7 @@ class Item extends React.Component {
                 RootNavigation.navigate("New", {
                   cardId: id.toString(),
                   type: 1,
+                  diarytype:type
                 }),
                   this.refRBSheet.close();
               }}
@@ -144,7 +145,7 @@ class Item extends React.Component {
             <View style={styles.buttonLine}></View>
             <TouchableOpacity
               onPress={() => {
-                this.deleteDiary(id), this.refRBSheet.close();
+                this.deleteDiary(id), this.refRBSheet.close(),this.props.update()
               }}
               style={styles.button}
             >
@@ -284,6 +285,7 @@ export default class HomeCard extends Component {
       content={item.content}
       type={item.type}
       onPress={(e) => item.id}
+      update={(e)=>{this.update()}}
     />
   );
   render() {
