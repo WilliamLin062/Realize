@@ -115,6 +115,7 @@ export class Edit extends Component {
       title: titles,
       selectedValue: types,
       loadIng: false,
+      type:types
     });
   }
   add = (text) => {
@@ -152,7 +153,7 @@ export class Edit extends Component {
             content.toString(),
             title.toString(),
             date.getFullYear(),
-            type,
+            Number(type),
             params.cardId,
           ]
         );

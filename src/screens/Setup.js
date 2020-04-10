@@ -43,7 +43,7 @@ export default function Setup() {
               />
             ),
           }}
-          initialParams={{ cardId: null, isEdit: false, type: null ,diarytype:null}}
+          initialParams={{ cardId: null, isEdit: false, type: null ,diarytype:0}}
         />
         <Stack.Screen
           name="Diary"

@@ -6,8 +6,7 @@
     "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
-      "android",
-      "web"
+      "android"
     ],
     "version": "1.0.0",
     "orientation": "portrait",
@@ -31,7 +30,7 @@
       "package": "com.williamsProject.Realize",
       "versionCode": 1
     },
-    "description": "a simple diary",
+    "description": "a     simple    diary",
     "githubUrl": "https://github.com/WilliamLin062/Realize"
   }
 }
